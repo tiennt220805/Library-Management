@@ -7,10 +7,9 @@ import com.tipie.librarymanagementsystem.service.GenreService;
 import com.tipie.librarymanagementsystem.util.ResponseFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +22,11 @@ public class GenreController {
     public ResponseEntity<ApiResponse<GenreDTO>> createGenre(@RequestBody GenreDTO genreDTO) {
         GenreDTO createdGenre = genreService.createGenre(genreDTO);
         return ResponseFactory.created(createdGenre, "Genre created successfully");
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<GenreDTO>>> getAllGenres() {
+        List<GenreDTO> genres = genreService.getAllGenres();
+        return ResponseFactory.ok(genres, "Get genres successfully");
     }
 }

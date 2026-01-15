@@ -1,11 +1,15 @@
 package com.tipie.librarymanagementsystem.service.impl;
 
+import com.tipie.librarymanagementsystem.mapper.GenreMapper;
 import com.tipie.librarymanagementsystem.modal.Genre;
 import com.tipie.librarymanagementsystem.payload.dto.GenreDTO;
 import com.tipie.librarymanagementsystem.repository.GenreRepository;
 import com.tipie.librarymanagementsystem.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,22 +34,14 @@ public class GenreServiceImpl implements GenreService {
 
         Genre createdGenre = genreRepository.save(genre);
 
-        GenreDTO createdGenreDTO = GenreDTO.builder()
-                .id(createdGenre.getId())
-                .code(createdGenre.getCode())
-                .name(createdGenre.getName())
-                .description(createdGenre.getDescription())
-                .displayOrder(createdGenre.getDisplayOrder())
-                .active(createdGenre.getActive())
-                .createdDate(createdGenre.getCreatedAt())
-                .updatedDate(createdGenre.getUpdatedAt())
-                .build();
-
-        if (createdGenre.getParentGenre() != null) {
-            createdGenreDTO.setParentGenreId(createdGenre.getParentGenre().getId());
-            createdGenreDTO.setParentGenreName(createdGenre.getParentGenre().getName());
-        }
+        GenreDTO createdGenreDTO = GenreMapper.toDTO(createdGenre);
 
         return createdGenreDTO;
+    }
+
+    @Override
+    public List<GenreDTO> getAllGenres() {
+        return genreRepository.findAll().stream()
+                .map(GenreMapper::toDTO).collect(Collectors.toList());
     }
 }
