@@ -37,4 +37,18 @@ public class GenreMapper {
 
         return genreDTO;
     }
+
+    public static Genre toEntity(GenreDTO genreDTO) {
+        if (genreDTO == null) {
+            return null;
+        }
+
+        return Genre.builder()
+                .code(genreDTO.getCode())
+                .name(genreDTO.getName())
+                .description(genreDTO.getDescription())
+                .displayOrder(genreDTO.getDisplayOrder())
+                .active(true)
+                .build();
+    }
 }

@@ -19,24 +19,16 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public GenreDTO createGenre(GenreDTO genreDTO) {
-        Genre genre = Genre.builder()
-                .code(genreDTO.getCode())
-                .name(genreDTO.getName())
-                .description(genreDTO.getDescription())
-                .displayOrder(genreDTO.getDisplayOrder())
-                .active(true)
-                .build();
+        Genre genre = GenreMapper.toEntity(genreDTO);
 
         if (genreDTO.getParentGenreId() != null) {
-            Genre parentGenre = genreRepository.findById(genreDTO.getParentGenreId()).get();
-            genre.setParentGenre(parentGenre);
+            genreRepository.findById(genreDTO.getParentGenreId())
+                    .ifPresent(genre::setParentGenre);
         }
 
         Genre createdGenre = genreRepository.save(genre);
 
-        GenreDTO createdGenreDTO = GenreMapper.toDTO(createdGenre);
-
-        return createdGenreDTO;
+        return GenreMapper.toDTO(createdGenre);
     }
 
     @Override
