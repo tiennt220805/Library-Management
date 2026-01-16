@@ -1,4 +1,4 @@
-package com.tipie.librarymanagementsystem.payload.dto;
+package com.tipie.librarymanagementsystem.payload.response;
 
 import lombok.*;
 
@@ -10,28 +10,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GenreDTO {
-
+public class GenreResponse {
     private Long id;
-
     private String code;
-
     private String name;
-
     private String description;
-
     private Integer displayOrder=0;
-
     private boolean active;
-
     private Long parentGenreId;
-
     private String parentGenreName;
-
-    private List<GenreDTO> subGenre;
-
+    private List<GenreResponse> subGenres;
     private Long bookCount;
-
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 }

@@ -2,7 +2,8 @@ package com.tipie.librarymanagementsystem.service.impl;
 
 import com.tipie.librarymanagementsystem.mapper.GenreMapper;
 import com.tipie.librarymanagementsystem.modal.Genre;
-import com.tipie.librarymanagementsystem.payload.dto.GenreDTO;
+import com.tipie.librarymanagementsystem.payload.request.genre.CreateGenreRequest;
+import com.tipie.librarymanagementsystem.payload.response.GenreResponse;
 import com.tipie.librarymanagementsystem.repository.GenreRepository;
 import com.tipie.librarymanagementsystem.service.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -18,22 +19,22 @@ public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
 
     @Override
-    public GenreDTO createGenre(GenreDTO genreDTO) {
-        Genre genre = GenreMapper.toEntity(genreDTO);
+    public GenreResponse createGenre(CreateGenreRequest request) {
+        Genre genre = GenreMapper.toEntity(request);
 
-        if (genreDTO.getParentGenreId() != null) {
-            genreRepository.findById(genreDTO.getParentGenreId())
+        if (request.getParentGenreId() != null) {
+            genreRepository.findById(request.getParentGenreId())
                     .ifPresent(genre::setParentGenre);
         }
 
         Genre createdGenre = genreRepository.save(genre);
 
-        return GenreMapper.toDTO(createdGenre);
+        return GenreMapper.toResponse(createdGenre);
     }
 
     @Override
-    public List<GenreDTO> getAllGenres() {
+    public List<GenreResponse> getAllGenres() {
         return genreRepository.findAll().stream()
-                .map(GenreMapper::toDTO).collect(Collectors.toList());
+                .map(GenreMapper::toResponse).collect(Collectors.toList());
     }
 }

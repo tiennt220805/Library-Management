@@ -1,17 +1,16 @@
 package com.tipie.librarymanagementsystem.mapper;
 
 import com.tipie.librarymanagementsystem.modal.Genre;
-import com.tipie.librarymanagementsystem.payload.dto.GenreDTO;
-
-import java.util.stream.Collectors;
+import com.tipie.librarymanagementsystem.payload.request.genre.CreateGenreRequest;
+import com.tipie.librarymanagementsystem.payload.response.GenreResponse;
 
 public class GenreMapper {
-    public static GenreDTO toDTO(Genre genre) {
+    public static GenreResponse toResponse(Genre genre) {
         if (genre == null) {
             return null;
         }
 
-        GenreDTO genreDTO = GenreDTO.builder()
+        GenreResponse response = GenreResponse.builder()
                 .id(genre.getId())
                 .code(genre.getCode())
                 .name(genre.getName())
@@ -22,33 +21,48 @@ public class GenreMapper {
                 .updatedDate(genre.getUpdatedAt())
                 .build();
 
+        // Thiết lập thông tin cha nếu có
         if (genre.getParentGenre() != null) {
-            genreDTO.setParentGenreId(genre.getParentGenre().getId());
-            genreDTO.setParentGenreName(genre.getParentGenre().getName());
+            response.setParentGenreId(genre.getParentGenre().getId());
+            response.setParentGenreName(genre.getParentGenre().getName());
         }
 
+        // Đệ quy xử lý các thể loại con (Sub-genres)
         if (genre.getSubGenres() != null && !genre.getSubGenres().isEmpty()) {
-            genreDTO.setSubGenre(genre.getSubGenres().stream()
+            response.setSubGenres(genre.getSubGenres().stream()
                     .filter(Genre::getActive)
-                    .map(GenreMapper::toDTO).collect(Collectors.toList()));
+                    .map(GenreMapper::toResponse)
+                    .toList());
         }
 
-        //genreDTO.setBookCount((long) genre.get);
+        //response.setBookCount((long) genre.get);
 
-        return genreDTO;
+        return response;
     }
 
-    public static Genre toEntity(GenreDTO genreDTO) {
-        if (genreDTO == null) {
+    public static Genre toEntity(CreateGenreRequest request) {
+        if (request == null) {
             return null;
         }
 
         return Genre.builder()
-                .code(genreDTO.getCode())
-                .name(genreDTO.getName())
-                .description(genreDTO.getDescription())
-                .displayOrder(genreDTO.getDisplayOrder())
+                .code(request.getCode())
+                .name(request.getName())
+                .description(request.getDescription())
+                .displayOrder(request.getDisplayOrder())
                 .active(true)
                 .build();
     }
+
+//    public static void updateEntity(UpdateGenreRequest request, Genre existingGenre) {
+//        if (request == null || existingGenre == null) {
+//            return;
+//        }
+//
+//        // Kiểm tra null trước khi gán để tránh ghi đè dữ liệu cũ bằng giá trị null
+//        if (request.getName() != null) existingGenre.setName(request.getName());
+//        if (request.getDescription() != null) existingGenre.setDescription(request.getDescription());
+//        if (request.getDisplayOrder() != null) existingGenre.setDisplayOrder(request.getDisplayOrder());
+//        if (request.getActive() != null) existingGenre.setActive(request.getActive());
+//    }
 }
